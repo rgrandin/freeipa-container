@@ -22,9 +22,12 @@ function run_and_wait_for () {
 	if [ -n "$seccomp" ] ; then
 		SEC_OPTS="--security-opt=seccomp:$seccomp"
 	fi
+	if [ "$docker" = "sudo podman" ] ; then
+		DNS_OPTS="--dns=8.8.8.8"
+	fi
 	$docker run --name $NAME -d -h ipa.example.test \
 		--tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-		$SEC_OPTS --sysctl net.ipv6.conf.all.disable_ipv6=0 $IMAGE
+		$SEC_OPTS --sysctl net.ipv6.conf.all.disable_ipv6=0 $DNS_OPTS $IMAGE
 	for j in $( seq 1 30 ) ; do
 		if $docker exec $NAME systemctl is-system-running --no-pager -l 2> /dev/null | grep -q -E 'running|degraded' ; then
 			return

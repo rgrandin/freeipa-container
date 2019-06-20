@@ -1,7 +1,7 @@
 # Clone from the CentOS 7
 FROM registry.centos.org/centos:7
 
-MAINTAINER Jan Pazdziora
+MAINTAINER Robert Grandin
 
 RUN curl -k https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -o /root/epel-release-latest-7.noarch.rpm
 RUN yum localinstall -y /root/epel-release-latest-7.noarch.rpm

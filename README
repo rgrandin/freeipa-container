@@ -1,7 +1,25 @@
-# FreeIPA server in Docker
+# FreeIPA server, with extras, in Docker
 
 This repository contains the Dockerfile and associated assets for
 building a FreeIPA server Docker image from the official yum repo.
+
+Please note that several branches exist, which provide the FreeIPA server
+on a variety of platforms, as well as client containers.  Additionally,
+branches exist which incorporate additional components into the FreeIPA
+server (e.g., freeradius, Google Authenticator, etc).  These additional
+branches exist so that these additional components may be used within a
+FreeIPA-enrolled container.
+
+This repository originally forked from https://github.com/freeipa/freeipa-container.
+All credit to the FreeIPA team for the initial development of the FreeIPA
+server containers.
+
+Additional component branches:
+* centos-7-freeradius-ga (docker tag: ga-radius): This adds a FreeRadius server,
+  with 2FA provided via Google Authenticator.
+
+
+## General instructions
 
 Install docker 1.10+:
 

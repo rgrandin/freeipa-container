@@ -16,8 +16,29 @@
 
 set -e
 
+LOG=/data/startup-log
+echo "" >> $LOG
+echo "" >> $LOG
+
+date >> $LOG
+echo "Initializing data" >> $LOG
+touch /data/.look-im-trying-to-run
+
 /usr/local/bin/populate-volume-from-template /tmp /data
 mkdir -p /run/log /data/var/log/journal
-ln -s /data/var/log/journal /run/log/journal
+
+if [ ! -e /run/log/journal ]
+then 
+  ln -s /data/var/log/journal /run/log/journal
+fi
+
+echo "Data initialized... attempting to start radiusd" >> $LOG
+touch /data/.look-i-ran
+/usr/sbin/radiusd
+
+echo "Radiusd running" >> $LOG
+touch /data/.look-radiusd-ran
+
+
 exec /usr/sbin/init
 exit 10

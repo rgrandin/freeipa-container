@@ -262,6 +262,29 @@ if [ -n "$IPA_SERVER_IP" ] ; then
 	echo "$IPA_SERVER_IP" > /run/ipa/ipa-server-ip
 fi
 
+LOG=/data/startup-log
+echo "" >> $LOG
+echo "" >> $LOG
+
+date >> $LOG
+echo "Initializing data" >> $LOG
+#touch /data/.look-im-trying-to-run
+
+mkdir -p /run/log /data/var/log/journal
+
+if [ ! -e /run/log/journal ]
+then 
+  ln -s /data/var/log/journal /run/log/journal
+fi
+
+echo "Data initialized... attempting to start radiusd" >> $LOG
+#touch /data/.look-i-ran
+/usr/sbin/radiusd
+
+echo "Radiusd running" >> $LOG
+#touch /data/.look-radiusd-ran
+
+
 exec /usr/sbin/init --show-status=false $SYSTEMD_OPTS
 
 exit 10

@@ -9,7 +9,22 @@ MAINTAINER Robert Grandin
 #RUN yum localinstall -y /root/epel-release-latest-7.noarch.rpm
 #RUN sed -i "s/metalink=https/metalink=http/" /etc/yum.repos.d/epel.repo
 RUN yum install -y epel-release
-RUN yum install -y google-authenticator freeradius freeradius-utils
+RUN yum install -y patch nfs-utils iproute cronie crontabs cronie-anacron freeradius freeradius-utils google-authenticator openssh-clients
+
+RUN  mv /etc/raddb /etc/raddb.orig
+RUN  mkdir /etc/raddb
+COPY radiusd /etc/pam.d/radiusd
+
+#ipa-client-install needs this
+RUN mv /bin/hostnamectl /bin/hostnamectl.orig
+RUN  ln -s /bin/true  /bin/hostnamectl
+
+
+#RUN echo "/usr/sbin/radiusd" >> /etc/rc.local
+#RUN chmod +x /etc/rc.d/rc.local
+#RUN systemctl enable rc-local
+#RUN mkdir /etc/ipa
+#RUN touch /etc/ipa/ca.crt
 
 
 
@@ -129,4 +144,4 @@ solution provides features for further integration with Linux based clients \
 (SUDO, automount) and integration with Active Directory based infrastructures \
 (Trusts)."
 
-
+#CMD /usr/sbin/radiusd

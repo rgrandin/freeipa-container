@@ -1,0 +1,7 @@
+#%PAM-1.0
+auth required pam_google_authenticator.so forward_pass secret=/GA/${USER}/.google_authenticator user=root
+auth       required    pam_sss.so forward_pass
+account    sufficient   pam_permit.so
+password   sufficient   pam_permit.so
+session    sufficient   pam_permit.so
+

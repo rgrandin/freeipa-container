@@ -45,8 +45,9 @@ done
 # Workaround 1373562
 mkdir -p /run/lock
 
+#unlink /run/log/journal/journal
 mkdir -p /run/ipa /run/log /data/var/log/journal
-ln -s /data/var/log/journal /run/log/journal
+ln -sf /data/var/log/journal /run/log/journal
 
 if [ "$1" == 'no-exit' -o -n "$DEBUG_NO_EXIT" ] ; then
 	if [ "$1" == 'no-exit' ] ; then
@@ -272,13 +273,10 @@ echo "Initializing data" >> $LOG
 
 mkdir -p /run/log /data/var/log/journal
 
-if [ ! -e /run/log/journal ]
-then 
-  ln -s /data/var/log/journal /run/log/journal
-fi
-
 echo "Data initialized... attempting to start radiusd" >> $LOG
 #touch /data/.look-i-ran
+#systemctl start sssd
+/usr/sbin/sssd --daemon
 /usr/sbin/radiusd
 
 echo "Radiusd running" >> $LOG

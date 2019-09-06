@@ -3,19 +3,20 @@ FROM registry.centos.org/centos:7
 
 MAINTAINER Robert Grandin
 
-# Note: Install FreeRadius and Google Authenticator here.  Later commands in this Dockerfile, done 
+# Note: Install FreeRadius and Google Authenticator here.  Later commands in this Dockerfile, done
 # as part of the FreeIPA installation, seem to break yum.
-#RUN curl -k https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -o /root/epel-release-latest-7.noarch.rpm
-#RUN yum localinstall -y /root/epel-release-latest-7.noarch.rpm
-#RUN sed -i "s/metalink=https/metalink=http/" /etc/yum.repos.d/epel.repo
-RUN yum install -y epel-release
-RUN yum install -y google-authenticator freeradius freeradius-utils
+#RUN yum install -y epel-release
+#RUN yum install -y google-authenticator freeradius freeradius-utils
+
+COPY rpms/freeipa-userstatus-plugin-0.0.2-1.el7.noarch.rpm .
+COPY rpms/python2-ipa-userstatus-client-0.0.2-1.el7.noarch.rpm .
+COPY rpms/python2-ipa-userstatus-server-0.0.2-1.el7.noarch.rpm .
 
 
 
 
 # ----------------------------------------------------------------------------
-# Note: Robert's customizations end here.
+# Note: Robert's customizations (nearly) end here.
 
 # Moving groupadd before freeipa installation to ensure uid and guid will be same
 RUN groupadd -g 288 kdcproxy ; useradd -u 288 -g 288 -c 'IPA KDC Proxy User' -d '/var/lib/kdcproxy' -s '/sbin/nologin' kdcproxy
@@ -25,6 +26,11 @@ RUN groupadd -g 389 dirsrv ; useradd -u 389 -g 389 -c 'user for 389-ds-base' -r 
 # Workaround 1615948
 RUN ln -s /bin/false /usr/sbin/systemd-machine-id-setup
 RUN yum install -y ipa-server ipa-server-dns ipa-server-trust-ad patch && yum clean all
+
+# ----------------------------------------------------------------------------
+# One final customization to install the plugin RPMs
+RUN yum localinstall -y ./*.rpm
+# ----------------------------------------------------------------------------
 
 # debug: RUN test $( getent passwd | grep -E "^(dirsrv:x:389|ipaapi:x:289|kdcproxy:x:288|pkiuser:x:17):" | wc -l ) -eq 4
 
@@ -128,5 +134,3 @@ Authorization (host access control, SELinux user roles, services). The \
 solution provides features for further integration with Linux based clients \
 (SUDO, automount) and integration with Active Directory based infrastructures \
 (Trusts)."
-
-

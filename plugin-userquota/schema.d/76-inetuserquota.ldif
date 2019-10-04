@@ -1,0 +1,26 @@
+#
+dn: cn=schema
+#
+attributeTypes: ( 2.16.840.1.113730.4.1.2000 
+                NAME 'scinetUserQuota' 
+                DESC 'Storage-quota of a user, based on UID' 
+                SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+                SINGLE-VALUE 
+                X-ORIGIN 'Extending FreeIPA for SCINet'
+                )
+#
+attributeTypes: ( 2.16.840.1.113730.4.1.2001
+                NAME 'scinetUserGroupQuota' 
+                DESC 'Storage-quota of a user-private group, based on GID' 
+                SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+                SINGLE-VALUE 
+                X-ORIGIN 'Extending FreeIPA for SCINet'
+                )
+#
+objectClasses: ( 2.16.840.1.113730.4.2.1
+                NAME 'scinetUser' 
+                DESC 'Auxiliary class which must be present in an entry for delivery of subscriber services' 
+                SUP top 
+                AUXILIARY MAY ( uid $ scinetUserGroupQuota $ scinetUserQuota ) 
+                X-ORIGIN 'Extending FreeIPA for SCINet'
+                )

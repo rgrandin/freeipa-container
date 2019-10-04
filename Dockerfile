@@ -3,20 +3,23 @@ FROM registry.centos.org/centos:7
 
 MAINTAINER Robert Grandin
 
-# Note: Install FreeRadius and Google Authenticator here.  Later commands in this Dockerfile, done
+# Note: Install additional packages here.  Later commands in this Dockerfile, done
 # as part of the FreeIPA installation, seem to break yum.
-#RUN yum install -y epel-release
-#RUN yum install -y google-authenticator freeradius freeradius-utils
 
-COPY rpms/freeipa-userstatus-plugin-0.0.2-1.el7.noarch.rpm .
-COPY rpms/python2-ipa-userstatus-client-0.0.2-1.el7.noarch.rpm .
-COPY rpms/python2-ipa-userstatus-server-0.0.2-1.el7.noarch.rpm .
+
+
+
 
 
 
 
 # ----------------------------------------------------------------------------
-# Note: Robert's customizations (nearly) end here.
+#          Note:       Robert's customizations (nearly) end here.
+# ----------------------------------------------------------------------------
+
+
+
+
 
 # Moving groupadd before freeipa installation to ensure uid and guid will be same
 RUN groupadd -g 288 kdcproxy ; useradd -u 288 -g 288 -c 'IPA KDC Proxy User' -d '/var/lib/kdcproxy' -s '/sbin/nologin' kdcproxy
@@ -27,10 +30,23 @@ RUN groupadd -g 389 dirsrv ; useradd -u 389 -g 389 -c 'user for 389-ds-base' -r 
 RUN ln -s /bin/false /usr/sbin/systemd-machine-id-setup
 RUN yum install -y ipa-server ipa-server-dns ipa-server-trust-ad patch && yum clean all
 
+
+
 # ----------------------------------------------------------------------------
-# One final customization to install the plugin RPMs
-RUN yum localinstall -y ./*.rpm
+# RJG: Copy files for LDAP schema extension.  Do this after the above 'yum install'
+#      so adding more plugins later doesn't require as long of a container build.
+
+RUN mkdir -p /data-plugins
+COPY plugin-userquota/         /data-plugins/plugin-userquota 
+COPY plugin-userstatus/        /data-plugins/plugin-userstatus 
+# RUN cd /data-plugins/plugin-userquota && ./install.sh
 # ----------------------------------------------------------------------------
+
+
+
+
+
+
 
 # debug: RUN test $( getent passwd | grep -E "^(dirsrv:x:389|ipaapi:x:289|kdcproxy:x:288|pkiuser:x:17):" | wc -l ) -eq 4
 

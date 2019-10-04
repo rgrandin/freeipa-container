@@ -14,13 +14,13 @@ return null;
 
 var usergroupquota_plugin = {};
 
-// adds 'inetuserquota' field into user details facet
+// adds 'scinetuserquota' field into user details facet
 usergroupquota_plugin.add_user_group_quota_pre_op = function() {
 
 var facet = get_item(IPA.user.entity_spec.facets, '$type', 'details');
 var section = get_item(facet.sections, 'name', 'misc');
 section.fields.push({
-    name: 'inetusergroupquota',
+    name: 'scinetusergroupquota',
     label: 'User-Private Group Quota',
     tooltip: {
         title: '@i18n:usergroupquota.user_tooltip',

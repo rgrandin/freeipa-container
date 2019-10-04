@@ -39,7 +39,7 @@ RUN yum install -y ipa-server ipa-server-dns ipa-server-trust-ad patch && yum cl
 RUN mkdir -p /data-plugins
 COPY plugin-userquota/         /data-plugins/plugin-userquota 
 COPY plugin-userstatus/        /data-plugins/plugin-userstatus 
-# RUN cd /data-plugins/plugin-userquota && ./install.sh
+RUN cd /data-plugins/plugin-userquota && ./install.sh
 # ----------------------------------------------------------------------------
 
 

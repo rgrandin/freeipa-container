@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 # FreeIPA server, with extras, in Docker
+=======
+# FreeIPA, with FreeRadius and Google Authenticator, in Docker
+>>>>>>> centos-7-userstatus
 
 This repository contains the Dockerfile and associated assets for
 building a FreeIPA server Docker image from the official yum repo.
+Though capble of being a FreeIPA server, this may be run simply as
+a FreeIPA client.
+
+FreeRadius and Google Authenticator, for multi-factor authentication,
+are also included in this build.
 
 Please note that several branches exist, which provide the FreeIPA server
 on a variety of platforms, as well as client containers.  Additionally,
@@ -37,9 +46,13 @@ The repository contains multiple `Dockerfile`s for various
 operating systems. Use `-f` option to `docker build` to pick
 different than default target.
 
-Create directory which will hold the server data:
+Create directory which will hold the IPA server data:
 
     mkdir /var/lib/ipa-data
+
+Create directory which will hold the FreeRadius data:
+
+    mkdir /var/lib/freeradius-data
 
 On SELinux enabled systems,
 
@@ -53,7 +66,9 @@ FreeIPA server container can be created with
     docker run --name freeipa-server-container -ti \
        -h ipa.example.test \
        --read-only \
-       -v /var/lib/ipa-data:/data:Z freeipa-server [ opts ]
+       -v /var/lib/ipa-data:/data:Z \
+       -v /var/lib/freeradius-data:/etc/raddb:Z \
+       freeipa-server [ opts ]
 
 Without oci-systemd-hook, `/run`, `/tmp`, and `/sys/fs/cgroup`
 need to be mounted explicitly:
@@ -62,7 +77,9 @@ need to be mounted explicitly:
        -h ipa.example.test \
        -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
        --tmpfs /run --tmpfs /tmp \
-       -v /var/lib/ipa-data:/data:Z freeipa-server [ opts ]
+       -v /var/lib/ipa-data:/data:Z \ 
+       -v /var/lib/freeradius-data:/etc/raddb:Z \
+       freeipa-server [ opts ]
 
 Also, without oci-systemd-hook, running the container as
 `--read-only` will typically only work when `/etc/machine-id`
@@ -212,6 +229,9 @@ freeipa-server container directly:
 
 The first time this container runs, it invokes `ipa-client-install`
 with the given admin password.
+
+Data for FreeRadius will need to be bind-mounted into the container
+as shown above in the freeipa-server instructions.
 
 # Debugging
 

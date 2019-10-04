@@ -1,0 +1,6 @@
+# Add an explicit self-service ACI to allow writing to inetuserstatus attribute
+# for the owner of the object
+
+# Copied from user-status plugin.  Not wanted for self-service quota updates.
+#dn: cn=users,cn=accounts,$SUFFIX
+#add:aci:(targetattr = "inetuserstatus")(version 3.0;acl "selfservice:Users can manage their own status";allow (write) userdn = "ldap:///self";)

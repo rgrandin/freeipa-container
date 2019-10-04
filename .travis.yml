@@ -30,11 +30,11 @@ matrix:
     - stage: sanity
       script: if comm -23 <( echo "$FILES_CHANGED" ) <( echo "$TRAVIS_DOCKERFILES" ) | grep Dockerfile. ; then echo "Dockerfile modified but not tracked by Travis." >&2 ; exit 1 ; else echo "No unexpected Dockerfile changes, OK." ; fi
     - stage: build
+      env: dockerfile=fedora-31 readonly=--read-only
+    - stage: build
       env: dockerfile=fedora-30 readonly=--read-only
     - stage: build
       env: dockerfile=fedora-30 ca=--external-ca readonly=--read-only
-    - stage: build
-      env: dockerfile=fedora-30
     - stage: build
       env: dockerfile=fedora-29
     - stage: build
@@ -44,14 +44,16 @@ matrix:
     - stage: build
       env: dockerfile=centos-7
     - stage: build
-      env: dockerfile=fedora-rawhide
-    - stage: build
       env: dockerfile=fedora-23 replica=none seccomp=unconfined readonly=--read-only
   exclude:
+    - stage: build
+      env: dockerfile=fedora-rawhide
     - stage: build
       env: dockerfile=rhel-7
     - stage: build
       env: dockerfile=rhel-8
+    - stage: build
+      env: dockerfile=fedora-30
     - stage: build
       env: dockerfile=fedora-28
     - stage: build
@@ -64,7 +66,9 @@ matrix:
       env: dockerfile=fedora-24 replica=none seccomp=unconfined
 
 script:
-- if test -n "$RUN_DOCKER_BUILD" ; then tests/run-partial-tests.sh Dockerfile.$dockerfile ; fi
-- docker ps -aq | while read i ; do docker rm -f $i ; done
 - if test -n "$RUN_DOCKER_BUILD" ; then docker build -t local/freeipa-server -f Dockerfile.$dockerfile . ; fi
 - if test -n "$RUN_DOCKER_BUILD" ; then tests/run-master-and-replica.sh local/freeipa-server ; fi
+
+after_failure:
+- docker ps -aq | while read i ; do docker rm -f $i ; done
+- if test -n "$RUN_DOCKER_BUILD" ; then tests/run-partial-tests.sh Dockerfile.$dockerfile ; fi

@@ -14,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# Immediately exit, to skip auto-install attempt at container launch
+exit
+
+
+
 mark_exit_code () {
 	exit_code=$?
 	echo $exit_code > /run/ipa/exit_code

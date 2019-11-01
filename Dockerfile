@@ -85,6 +85,9 @@ RUN echo 2.0 > /etc/volume-version
 #VOLUME [ "/tmp", "/run", "/data", "/var/log/journal" ]
 VOLUME [ "/data", "/var/log/journal" ]
 
+RUN unlink /var/tmp
+RUN mkdir -p /var/tmp
+
 COPY init-data-minimal /usr/local/sbin/init
 ENTRYPOINT [ "/usr/local/sbin/init" ]
 # test: systemd-container-ipa-server-install-data.sh docker-diff-minimal-centos-7.out

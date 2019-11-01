@@ -82,7 +82,8 @@ RUN /usr/local/bin/prepare-volume-template /etc/volume-tmp-list /tmp
 RUN /usr/local/bin/extract-rpm-upgrade-scriptlets
 
 RUN echo 2.0 > /etc/volume-version
-VOLUME [ "/tmp", "/run", "/data", "/var/log/journal" ]
+#VOLUME [ "/tmp", "/run", "/data", "/var/log/journal" ]
+VOLUME [ "/data", "/var/log/journal" ]
 
 COPY init-data-minimal /usr/local/sbin/init
 ENTRYPOINT [ "/usr/local/sbin/init" ]
